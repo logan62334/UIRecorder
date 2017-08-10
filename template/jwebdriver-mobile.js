@@ -75,7 +75,9 @@ function runThisSpec(){
                 self.driver = driver.session({
                     'platformName': platformName,
                     'udid': device.udid,
-                    'app': /^(\/|[a-z]:\\|https?:\/\/)/i.test(appPath) ? appPath : rootPath + '/' + appPath
+                    'app': /^(\/|[a-z]:\\|https?:\/\/)/i.test(appPath) ? appPath : rootPath + '/' + appPath,
+                    'package': 'me.ele',
+                    'activity': 'me.ele.Launcher'
                 });
                 self.testVars = testVars;
                 let casePath = path.dirname(caseName);
