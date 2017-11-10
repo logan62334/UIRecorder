@@ -1,6 +1,30 @@
 UI Recorder change log
 ====================
 
+## ver 2.5.35 (2017-11-1)
+
+1. Add: support detect chromedriver bin file
+2. Fix: kill uirecorder after chromedriver killed
+
+## ver 2.5.34 (2017-10-25)
+
+1. Add: bail after first test failure
+2. Fix: support save acceptAlert after cmd beforeunload
+3. Add: support not copy screenshot when no failed `--reporter-options copyShotOnlyFail=true`
+
+## ver 2.5.33 (2017-9-20)
+
+1. Add: add `value` to attr switch
+
+## ver 2.5.32 (2017-9-14)
+
+1. Fix: fix text path issue when contain space
+
+## ver 2.5.31 (2017-9-7)
+
+1. Fix: fix double event issue when change black value list
+2. Add: add document
+
 ## ver 2.5.30 (2017-9-4)
 
 1. Fix: fix update var issue after load module

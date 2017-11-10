@@ -24,7 +24,7 @@
     var arrPathAttrs = [];
     var mapPathAttrs = {};
     var strAttrValueBlack = '';
-    var reTextValueBlack = /×/;
+    var reTextValueBlack = /[×\s]/;
     var reAttrValueBlack = /^$/;
     var reClassValueBlack = /^$/;
     var hideBeforeExpect = '';
@@ -71,7 +71,6 @@
 
     // load config
     function updateConfig(config){
-        console.log(config);
         pkgVersion = config.version;
         if(config.testVars){
             testVars = config.testVars;
@@ -192,8 +191,8 @@
         var idValue = mapPathAttrs.id && target.getAttribute && target.getAttribute('id');
         var textValue = mapPathAttrs.text && target.childNodes.length === 1 && target.firstChild.nodeType === 3 && target.textContent;
         var nameValue = mapPathAttrs.name && target.getAttribute && target.getAttribute('name');
-        var typeValue = target.getAttribute && target.getAttribute('type');
-        var valueValue = target.getAttribute && target.getAttribute('value');
+        var typeValue = mapPathAttrs.type && target.getAttribute && target.getAttribute('type');
+        var valueValue = mapPathAttrs.value && target.getAttribute && target.getAttribute('value');
         var tempTestPath = '[data-testid="'+testidValue+'"]';
         var tempIdPath = '#'+idValue;
         var tempTextPath = `//${tagName}[text()="${textValue}"]`;
@@ -212,11 +211,13 @@
         else if(tagName === 'input'){
             // 表单项特殊校验
             tempPath = nameValue ? tagName + '[name="'+nameValue+'"]' : tagName;
-            switch(typeValue){
-                case 'radio':
-                case 'checkbox':
-                    tempPath += '[value="'+valueValue+'"]';
-                    break;
+            if(valueValue){
+                switch(typeValue){
+                    case 'radio':
+                    case 'checkbox':
+                        tempPath += '[value="'+valueValue+'"]';
+                        break;
+                }
             }
             tempPath += (childPath ? ' > ' + childPath : '');
             if(checkUniqueSelector(rootNode, tempPath, isAllDom)){
@@ -760,7 +761,9 @@
 
     function showToolPannel(){
         if(isOnload && configLoaded){
-            initRecorderEvent();
+            if(!document._uirecorderEventInited){
+                initRecorderEvent();
+            }
             initRecorderDom();
         }
     }
@@ -1029,10 +1032,7 @@
                 var newListener = function(e){
                     var returnValue = oldListener(e);
                     if(returnValue){
-                        sendAlertCmd('beforeUnload');
-                        setTimeout(function(){
-                            sendAlertCmd('cancelBeforeUnload');
-                        }, 500);
+                        sendAlertCmd('acceptAlert');
                     }
                     return returnValue;
                 }
@@ -1050,7 +1050,7 @@
                 if(oldBeforeunload){
                     window.onbeforeunload = wrapBeforeUnloadListener(oldBeforeunload)
                 }
-            }, 500);
+            }, 1000);
         }
         unsafeEval(hookAlertFunction.toString());
     }
@@ -1137,6 +1137,8 @@
 
     // 初始化事件
     function initRecorderEvent(){
+
+        document._uirecorderEventInited = true;
 
         document.addEventListener('mousemove', function(event){
             var target = event.target;
